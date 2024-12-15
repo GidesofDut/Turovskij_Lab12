@@ -1,0 +1,61 @@
+#include <iostream>
+#include <string>
+using namespace std;
+class Account {
+protected:
+    double balance;
+    string accountNumber;
+public:
+    Account(const string& accNumber, double initialBalance = 0.0)
+        : accountNumber(accNumber), balance(initialBalance) {}
+    void deposit(double amount) {
+        if (amount > 0) {
+            balance += amount;
+            cout << "Deposited: " << amount << ", New balance: " << balance << endl;
+        } else {
+            cout << "Invalid deposit amount." << endl;
+        }
+    }
+    void display() const {
+        cout << "Account Number: " << accountNumber << ", Balance: " << balance << endl;
+    }
+    virtual ~Account() {}
+};
+class CheckingAccount : public Account {
+private:
+    double overdraftLimit;
+public:
+    CheckingAccount(const string& accNumber, double initialBalance, double overdraft)
+        : Account(accNumber, initialBalance), overdraftLimit(overdraft) {}
+    void withdraw(double amount) {
+        if (amount <= 0) {
+            cout << "Invalid withdrawal amount." << endl;
+            return;
+        }
+        if (balance - amount >= -overdraftLimit) {
+            balance -= amount;
+            cout << "Withdrew: " << amount << ", New balance: " << balance << endl;
+        } else {
+            cout << "Withdrawal failed! Exceeds overdraft limit." << endl;
+        }
+    }
+    void display() const {
+        cout << "Account Number: " << accountNumber
+             << ", Balance: " << balance
+             << ", Overdraft Limit: " << overdraftLimit << endl;
+    }
+};
+int main() {
+    Account acc1("ACC12345", 500.0);
+    acc1.display();
+    acc1.deposit(200.0);
+    acc1.display();
+    cout << "---------------------------" << endl;
+    CheckingAccount checkAcc("CHK67890", 300.0, 150.0);
+    checkAcc.display();
+    checkAcc.deposit(100.0);
+    checkAcc.withdraw(400.0); 
+    checkAcc.withdraw(200.0);
+    checkAcc.display();
+    return 0;
+}
